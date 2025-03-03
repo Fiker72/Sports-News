@@ -1,6 +1,6 @@
 // Define API key if not already defined
 if (typeof API_KEY === 'undefined') {
-    API_KEY = '705f793a5c7d4daf9055a6cba26f1e44';
+    API_KEY = 'c421cbe6782aa78a8b8fb1c1ab4bb5df';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTheme(newTheme);
     });
 
-    // Function to fetch news from NewsAPI
+    // Function to fetch news from GNews API
     async function fetchNews(category = 'all') {
         let query;
         switch(category) {
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 query = 'soccer football';
         }
         
-        const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=en&sortBy=publishedAt&pageSize=12&apiKey=${API_KEY}`;
+        const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=10&apikey=${API_KEY}`;
         
         try {
             const response = await fetch(url);
@@ -70,8 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to create news card HTML
     function createNewsCard(article) {
-        const image = article.urlToImage || 'https://placehold.co/600x400/png?text=Soccer+News';
-        const title = article.title.split(' - ')[0]; // Remove source name from title
+        const image = article.image || 'https://placehold.co/600x400/png?text=Soccer+News';
+        const title = article.title;
         
         return `
             <a href="${article.url}" target="_blank" rel="noopener" class="news-card">
