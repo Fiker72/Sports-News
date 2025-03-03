@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 query = 'UEFA Champions League soccer football';
                 break;
             default:
-                query = 'soccer football';
+                query = 'soccer OR football';
         }
         
         const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=10&apikey=${API_KEY}`;
@@ -89,6 +89,17 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    // Function to check if article is soccer-related
+    function isSoccerArticle(article) {
+        const soccerKeywords = ['soccer', 'football', 'premier league', 'la liga', 'champions league', 'fifa', 'uefa', 'world cup', 'soccer news'];
+        const content = (article.title + ' ' + article.description).toLowerCase();
+        const isSoccer = soccerKeywords.some(keyword => content.includes(keyword)) || article.source.name.toLowerCase().includes('soccer') || article.source.name.toLowerCase().includes('football');
+        if (!isSoccer) {
+            console.log('Filtered out article:', article);
+        }
+        return isSoccer;
+    }
+
     // Function to update news grid
     async function updateNewsGrid(category) {
         try {
@@ -97,13 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingSpinner.style.display = 'block';
 
             const articles = await fetchNews(category);
+            const filteredArticles = articles.filter(isSoccerArticle);
             
-            if (articles.length === 0) {
-                newsGrid.innerHTML = '<div class="no-results">No news articles found</div>';
+            if (filteredArticles.length === 0) {
+                newsGrid.innerHTML = '<div class="no-results">No soccer news articles found</div>';
                 return;
             }
 
-            newsGrid.innerHTML = articles.map(createNewsCard).join('');
+            newsGrid.innerHTML = filteredArticles.map(createNewsCard).join('');
         } catch (error) {
             showError(error.message);
         } finally {
@@ -158,6 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 5000);
     }
 
-    // Load initial news
-    updateNewsGrid('all');
+    // Automatically load Premier League news on page load
+    updateNewsGrid('premier-league');
 });
